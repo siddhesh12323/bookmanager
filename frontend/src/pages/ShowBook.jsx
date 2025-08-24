@@ -12,7 +12,7 @@ const ShowBook = () => {
   const token = localStorage.getItem("token");
   useEffect(() => {
     setLoading(true);
-    axios.get(`${import.meta.env.VITE_API_URL}/${id}`, {
+    axios.get(`${import.meta.env.VITE_API_URL}/books/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

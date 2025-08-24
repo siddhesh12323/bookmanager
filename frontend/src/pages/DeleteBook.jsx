@@ -16,7 +16,7 @@ const DeleteBook = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`${import.meta.env.VITE_API_URL}/${id}`, {
+    axios.get(`${import.meta.env.VITE_API_URL}/books/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -51,7 +51,7 @@ const DeleteBook = () => {
   const deleteBook = async () => {
     setDeleting(true);
     try {
-      const response = await axios.delete(`http://localhost:5555/books/${id}`, {
+      const response = await axios.delete(`${import.meta.env.VITE_API_URL}/books/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

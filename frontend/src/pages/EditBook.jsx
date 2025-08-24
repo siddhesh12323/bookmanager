@@ -17,7 +17,7 @@ const EditBook = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`http://localhost:5555/books/${id}`, {
+    axios.get(`${import.meta.env.VITE_API_URL}/books/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -38,7 +38,7 @@ const EditBook = () => {
   async function editbook() {
     setSubmitting(true);
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/${id}`, {
+      const response = await axios.put(`${import.meta.env.VITE_API_URL}/books/${id}`, {
         title: title,
         author: author,
         publishedYear: publishedYear
