@@ -20,8 +20,10 @@ app.use("/users", userRouter);
 //   })
 // );
 
-app.get("/", () => {
+// This is correct
+app.get("/", (req, res) => {
   console.log(`Yahallo!`);
+  res.status(200).send("Server is up and running!");
 });
 
 const PORT = process.env.PORT || 5000;
