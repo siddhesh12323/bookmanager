@@ -38,7 +38,7 @@ const EditBook = () => {
   async function editbook() {
     setSubmitting(true);
     try {
-      const response = await axios.put(`http://localhost:5555/books/${id}`, {
+      const response = await axios.put(`${import.meta.env.VITE_API_URL}/${id}`, {
         title: title,
         author: author,
         publishedYear: publishedYear

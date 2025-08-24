@@ -22,7 +22,7 @@ const Signup = () => {
                 throw new Error("Password and Confirm Passwords are not the same");
             }
             console.log("Passwords same...");
-            const response = await axios.post(`http://localhost:5555/users/signup`, {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/signup`, {
                 'username': username,
                 'password': password
             });

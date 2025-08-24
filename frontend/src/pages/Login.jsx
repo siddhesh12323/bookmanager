@@ -28,7 +28,7 @@ const Login = () => {
     console.log("Before try catch...");
     try {
       console.log("Inside try catch...");
-      const response = await axios.post(`http://localhost:5555/users/login`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, {
         'username': username,
         'password': password
       });

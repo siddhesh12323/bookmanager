@@ -25,10 +25,11 @@ app.get("/", () => {
 });
 
 const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0';
 
 mongoose.connect(process.env.MONGODBURL).then(() => { 
     console.log(`MongoDB connected!`); 
-    app.listen(PORT, () => {
+    app.listen(PORT, HOST, () => {
       console.log(`App is live on ${PORT}`);
     });
 }).catch((err) => { console.log(err); })
