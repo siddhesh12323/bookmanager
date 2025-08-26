@@ -6,7 +6,7 @@ const Signup = () => {
     const [loading, setLoading] = useState(false);
     const [signupMessage, setSignupMessage] = useState("");
     const [username, setUsername] = useState("");
-    const [password, setPassword] =  useState("");
+    const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const navigate = useNavigate();
@@ -26,7 +26,7 @@ const Signup = () => {
                 'username': username,
                 'password': password
             });
-            if(response.status === 201) {
+            if (response.status === 201) {
                 setSignupMessage("Account created successfully!");
                 setUsername("");
                 setPassword("");
@@ -48,7 +48,7 @@ const Signup = () => {
             }
         } finally {
             setLoading(false);
-            
+
         }
     }
 
@@ -71,6 +71,12 @@ const Signup = () => {
                 <button onClick={() => signup()} className='bg-amber-500 rounded-2xl mb-10 h-10 p-6 cursor-pointer flex justify-center items-center'>
                     {loading ? "Creating..." : "Create"}
                 </button>
+                <div className='flex'>
+                    <p className='mr-2'>Already have an account?</p>
+                    <Link to={'/login'} className='text-blue-400'>
+                        Login
+                    </Link>
+                </div>
                 <p className='text-lg'>{signupMessage}</p>
             </div>
         </>

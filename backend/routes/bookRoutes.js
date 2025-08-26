@@ -1,10 +1,11 @@
 import { Book } from "../models/bookModel.js";
 import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware.js";
+import { upload } from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", authMiddleware, async (request, response) => {
+router.post("/", authMiddleware, upload.single("image"), async (request, response) => {
   try {
     if (
       !request.body.title ||
@@ -15,17 +16,14 @@ router.post("/", authMiddleware, async (request, response) => {
         .status(400)
         .send({ message: "Title, Author and Published Year are required!" });
     } else {
-      await Book.create({
+      const book = await Book.create({
         title: request.body.title,
         author: request.body.author,
         publishedYear: request.body.publishedYear,
+        image: request.file ? request.file.path : null,
         user: request.user.id
       });
-      return response.status(201).send({
-        title: request.body.title,
-        author: request.body.author,
-        publishedYear: request.body.publishedYear,
-      });
+      return response.status(201).send(book);
     }
   } catch (error) {
     console.log(error);
@@ -65,21 +63,18 @@ router.get("/:id", authMiddleware, async (request, response) => {
   }
 });
 
-router.put("/:id", authMiddleware, async (request, response) => {
+router.put("/:id", authMiddleware, upload.single("image"), async (request, response) => {
   try {
-    const { title, author, publishedYear } = request.body;
-    if (!title || !author || !publishedYear) {
-      return response
-        .status(400)
-        .send({ message: "Title, Author and Published Year are required!" });
-    }
-    const book = await Book.findByIdAndUpdate(
+    const updateData = {};
+
+    if (req.body.title) updateData.title = req.body.title;
+    if (req.body.author) updateData.author = req.body.author;
+    if (req.body.publishedYear) updateData.publishedYear = req.body.publishedYear;
+    if (req.file) updateData.image = req.file.filename;
+    const book = await Book.findOneAndUpdate(
       { _id: request.params.id, user: request.user.id },
-      {
-        title,
-        author,
-        publishedYear,
-      }
+      updateData,
+      { new: true }
     );
     if (!book) {
       return response.send(404).send({ message: "Book Not found!" });

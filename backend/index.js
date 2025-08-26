@@ -11,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/books", router);
 app.use("/users", userRouter);
+app.use("/uploads", express.static("uploads"));
 
 // app.use(
 //   cors({
@@ -29,9 +30,9 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
-mongoose.connect(process.env.MONGODBURL).then(() => { 
-    console.log(`MongoDB connected!`); 
-    app.listen(PORT, HOST, () => {
-      console.log(`App is live on ${PORT}`);
-    });
+mongoose.connect(process.env.MONGODBURL).then(() => {
+  console.log(`MongoDB connected!`);
+  app.listen(PORT, HOST, () => {
+    console.log(`App is live on ${PORT}`);
+  });
 }).catch((err) => { console.log(err); })

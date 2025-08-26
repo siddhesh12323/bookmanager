@@ -59,7 +59,7 @@ const Login = () => {
   return (
     <>
       <div className='flex flex-col justify-center items-center h-dvh'>
-        <p className='text-4xl mb-15'>Create an Account</p>
+        <p className='text-4xl mb-15'>Login</p>
         <span className='flex flex-col mb-5'>
           <label htmlFor="username" className='text-lg mb-1 self-start justify-center'>Username</label>
           <input type="text" value={username} id='username' onChange={(e) => setUsername(e.target.value)} className='p-3 w-100 border-2 rounded-2xl h-8' />
@@ -71,6 +71,12 @@ const Login = () => {
         <button onClick={() => login()} className='bg-amber-500 rounded-2xl mb-10 h-10 p-6 cursor-pointer flex justify-center items-center'>
           {loading ? "Logging In..." : "Login"}
         </button>
+        <div className='flex'>
+          <p className='mr-2'>Don't have an account?</p>
+          <Link to={'/signup'} className='text-blue-400'>
+            Signup
+          </Link>
+        </div>
         <p className='text-lg'>{loginMessage}</p>
       </div>
     </>

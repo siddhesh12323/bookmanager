@@ -14,6 +14,7 @@ const bookSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    image: { type: String },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // references User model
