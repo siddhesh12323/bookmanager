@@ -4,6 +4,7 @@ import router from "./routes/bookRoutes.js";
 import userRouter from "./routes/authRoutes.js";
 import cors from "cors";
 import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
 dotenv.config();
 
 const app = express();
@@ -12,6 +13,15 @@ app.use(express.json());
 app.use("/books", router);
 app.use("/users", userRouter);
 app.use("/uploads", express.static("uploads"));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Too many requests from this IP, please try again later.",
+  headers: true,
+});
+
+app.use(limiter);
 
 // app.use(
 //   cors({
