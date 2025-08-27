@@ -30,9 +30,25 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
-mongoose.connect(process.env.MONGODBURL).then(() => {
-  console.log(`MongoDB connected!`);
-  app.listen(PORT, HOST, () => {
-    console.log(`App is live on ${PORT}`);
+mongoose
+  .connect(process.env.MONGODBURL)
+  .then(() => {
+    console.log("✅ MongoDB connected!");
+    app.listen(PORT, HOST, () => {
+      console.log(`🚀 App is live on ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection failed:", err);
+    process.exit(1); // Crash explicitly if DB fails
   });
-}).catch((err) => { console.log(err); })
+
+// Extra crash/error logging
+process.on("uncaughtException", (err) => {
+  console.error("💥 Uncaught Exception:", err);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("💥 Unhandled Rejection at:", promise, "reason:", reason);
+});
+

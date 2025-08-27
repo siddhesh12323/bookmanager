@@ -5,8 +5,6 @@ import multer from "multer";
 import dotenv from "dotenv";
 dotenv.config();
 
-console.log("Cloudinary Key:", process.env.CLOUDINARY_API_KEY);
-
 // Configure Cloudinary
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
