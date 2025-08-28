@@ -3,6 +3,7 @@ import Spinner from '../components/Spinner'
 import BackButton from '../components/BackButton';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { BookInfoCard } from '../components/BookInfoCard';
 
 const DeleteBook = () => {
   const { id } = useParams();
@@ -56,7 +57,7 @@ const DeleteBook = () => {
           Authorization: `Bearer ${token}`
         }
       });
-      if(response.status === 200) {
+      if (response.status === 200) {
         setDeletedMessage(`Book Deleted!`);
       }
     } catch (error) {
@@ -80,25 +81,7 @@ const DeleteBook = () => {
   } else {
     content = (
       <>
-        <div className="ml-6 flex flex-col border-2 rounded-xl w-fit p-3">
-          <span className="text-gray-600">Id</span>
-          <span className="mb-3 text-2xl font-bold">{book._id}</span>
-
-          <span className="text-gray-600">Title</span>
-          <span className="mb-3 text-2xl font-bold">{book.title}</span>
-
-          <span className="text-gray-600">Author</span>
-          <span className="mb-3 text-2xl font-bold">{book.author}</span>
-
-          <span className="text-gray-600">Published Year</span>
-          <span className="mb-3 text-2xl font-bold">{book.publishedYear}</span>
-
-          <span className="text-gray-600">Created At</span>
-          <span className="text-2xl font-bold">
-            {new Date(book.createdAt).toString()}
-          </span>
-        </div>
-
+        {BookInfoCard(book)}
         <div>
           <button
             className="ml-6 mt-4 bg-red-500 w-30 h-10 rounded-2xl mr-1.5"
@@ -107,11 +90,9 @@ const DeleteBook = () => {
             Delete
           </button>
         </div>
-
         <div>
           <p className='ml-6 mt-4 text-green-500'>{deletedMessage}</p>
         </div>
-
         {/* Popup */}
         {showPopup && (
           <div style={styles.overlay}>

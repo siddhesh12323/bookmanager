@@ -71,7 +71,7 @@ const CreateBooks = () => {
         <label htmlFor="author" className='text-gray-500 text-xl'>Author </label>
         <input type="text" name="author" id="author" onChange={(e) => setAuthor(e.target.value)} className='mt-1 mb-3 border-2 w-2xl h-10 px-1.5 rounded-2xl' />
         <label htmlFor="publishedYear" className='text-gray-500 text-xl'>Published Year </label>
-        <input type="number" min="1900" max="2099" step="1" onChange={(e) => setPublishedYear(e.target.value)} placeholder="YYYY" name="publishedYear" id="publishedYear" className='mt-1 border-2 w-2xl h-10 px-1.5 rounded-2xl' />
+        <input type="number" min="1" max="2099" step="1" onChange={(e) => setPublishedYear(e.target.value)} placeholder="YYYY" name="publishedYear" id="publishedYear" className='mt-1 border-2 w-2xl h-10 px-1.5 rounded-2xl' />
 
         {/* Drag & Drop Zone */}
         <div

@@ -67,10 +67,10 @@ router.put("/:id", authMiddleware, upload.single("image"), async (request, respo
   try {
     const updateData = {};
 
-    if (req.body.title) updateData.title = req.body.title;
-    if (req.body.author) updateData.author = req.body.author;
-    if (req.body.publishedYear) updateData.publishedYear = req.body.publishedYear;
-    if (req.file) updateData.image = req.file.filename;
+    if (request.body.title) updateData.title = request.body.title;
+    if (request.body.author) updateData.author = request.body.author;
+    if (request.body.publishedYear) updateData.publishedYear = request.body.publishedYear;
+    if (request.file) updateData.image = request.file.path;
     const book = await Book.findOneAndUpdate(
       { _id: request.params.id, user: request.user.id },
       updateData,
@@ -82,7 +82,7 @@ router.put("/:id", authMiddleware, upload.single("image"), async (request, respo
     return response.send(200).send({ message: "Book Updated", data: book });
   } catch (error) {
     console.log(error);
-    return response.status(500).send({ message: error.message });
+    return response.status(500).send({ message: error });
   }
 });
 
