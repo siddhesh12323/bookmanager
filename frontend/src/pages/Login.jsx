@@ -3,21 +3,15 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  // set on login
-  // localStorage.setItem("token", response.data.token);
-
-  // send token on protected routes
-  // const token = localStorage.getItem("token");
-  // const response = await axios.get("http://localhost:5555/users/me", {
-  //   headers: {
-  //     Authorization: `Bearer ${token}`
-  //   }
-  // });
+  function isValidEmail(email) {
+    // Simple regex for validation
+    return /\S+@\S+\.\S+/.test(email);
+  }
 
   const [loading, setLoading] = useState(false);
   const [loginMessage, setLoginMessage] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
 
   const navigate = useNavigate();
 
@@ -25,18 +19,21 @@ const Login = () => {
     console.log("Logging in...");
     setLoading(true);
     setLoginMessage("");
-    console.log("Before try catch...");
+    // Check email format
+    if (!isValidEmail(email)) {
+      setLoginMessage("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
     try {
-      console.log("Inside try catch...");
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, {
-        'username': username,
-        'password': password
-      });
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`,
+        { email, password },
+        { withCredentials: true }
+      );
       if (response.status === 200) {
         setLoginMessage("Logged In successfully!");
-        setUsername("");
+        setEmail("");
         setPassword("");
-        localStorage.setItem("token", response.data.token);
         navigate("/books");
       }
     } catch (error) {
@@ -61,8 +58,8 @@ const Login = () => {
       <div className='flex flex-col justify-center items-center h-dvh'>
         <p className='text-4xl mb-15'>Login</p>
         <span className='flex flex-col mb-5'>
-          <label htmlFor="username" className='text-lg mb-1 self-start justify-center'>Username</label>
-          <input type="text" value={username} id='username' onChange={(e) => setUsername(e.target.value)} className='p-3 w-100 border-2 rounded-2xl h-8' />
+          <label htmlFor="email" className='text-lg mb-1 self-start justify-center'>Email</label>
+          <input type="text" value={email} id='email' onChange={(e) => setEmail(e.target.value)} className='p-3 w-100 border-2 rounded-2xl h-8' />
         </span>
         <span className='flex flex-col mb-5'>
           <label htmlFor="password" className='text-lg mb-1 self-start justify-center'>Password</label>
@@ -77,7 +74,7 @@ const Login = () => {
             Signup
           </Link>
         </div>
-        <p className='text-lg'>{loginMessage}</p>
+        <p className='mt-2 text-lg text-red-400'>{loginMessage}</p>
       </div>
     </>
   )

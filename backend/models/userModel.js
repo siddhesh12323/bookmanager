@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema(
   {
-    username: {
+    email: {
       type: String,
       required: true,
       unique: true
@@ -12,8 +12,8 @@ const userSchema = mongoose.Schema(
       required: true
     },
     bookIds: {
-        type: Array,
-        default: []
+      type: Array,
+      default: []
     }
   },
   {

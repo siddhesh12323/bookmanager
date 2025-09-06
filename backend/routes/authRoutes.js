@@ -2,22 +2,23 @@ import express from "express";
 import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const userRouter = express.Router();
 
-//! Find by username instead of create
+//! Find by email instead of create
 userRouter.post("/login", async (request, response) => {
   try {
-    const { username, password } = request.body;
-    if (!username || !password) {
+    const { email, password } = request.body;
+    if (!email || !password) {
       return response.status(400).send({
-        message: "Both username and password are required!",
+        message: "Both email and password are required!",
       });
     }
     // Find the user
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
     if (!user) {
-      return res
+      return response
         .status(400)
         .send({
           message:
@@ -29,20 +30,28 @@ userRouter.post("/login", async (request, response) => {
       return res
         .status(400)
         .send({
-          message: `Incorrect password for ${username}! Please re-check your password!`,
+          message: `Incorrect password for ${email}! Please re-check your password!`,
         });
     }
     // Create JWT
     const token = jwt.sign(
-      { id: user._id, username: user.username }, // payload
+      { id: user._id, email: user.email }, // payload
       process.env.JWT_SECRET || "supersecretkey", // secret key
       { expiresIn: 30 * 24 * 60 * 60 } // token expiry
     );
+
+    response.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // only HTTPS in prod
+      sameSite: "strict", // CSRF protection
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
     return response.status(200).send({
       message: "Success",
-      token: token,
-      user: { id: user._id, username: user.username },
+      user: { id: user._id, email: user.email },
     });
+
   } catch (error) {
     console.log(`Error at authRoutes get:- ${error}`);
     return response.status(500).send({
@@ -57,13 +66,13 @@ userRouter.post("/signup", async (request, response) => {
     return specialChars.test(str);
   }
   try {
-    if (!request.body.username || !request.body.password) {
+    if (!request.body.email || !request.body.password) {
       return response.status(400).send({
-        message: "Both username and password are required!",
+        message: "Both email and password are required!",
       });
     }
     const temp = await User.findOne({
-      username: request.body.username,
+      email: request.body.email,
     });
     if (temp) {
       return response.status(400).send({
@@ -81,25 +90,45 @@ userRouter.post("/signup", async (request, response) => {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(request.body.password, saltRounds);
     const user = await User.create({
-      username: request.body.username.trim(),
+      email: request.body.email.trim(),
       password: hashedPassword,
     });
     const token = jwt.sign(
-      { id: user._id, username: user.username },
+      { id: user._id, email: user.email },
       process.env.JWT_SECRET || "supersecretkey",
       { expiresIn: 30 * 24 * 60 * 60 }
     );
+    response.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // only HTTPS in prod
+      sameSite: "strict", // CSRF protection
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
     return response.status(201).send({
       message: "Success",
-      token: token,
-      user: { id: user._id, username: user.username },
+      user: { id: user._id, email: user.email },
     });
+
   } catch (error) {
     console.log(`Error at authRoutes get:- ${error}`);
     return response.status(500).send({
       message: error.message,
     });
   }
+});
+
+userRouter.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  return res.status(200).send({ message: "Logged out" });
+});
+
+userRouter.get("/me", authMiddleware, (req, res) => {
+  res.status(200).send({ user: req.user });
 });
 
 export default userRouter;

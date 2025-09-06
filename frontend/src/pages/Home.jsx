@@ -9,32 +9,51 @@ import { MdOutlineAddBox, MdOutlineDelete } from 'react-icons/md'
 const Home = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
+
   useEffect(() => {
-    setLoading(true);
-    const token = localStorage.getItem("token");
-    axios.get(`${import.meta.env.VITE_API_URL}/books`, {
-        headers: {
-          Authorization: `Bearer ${token}`
+    const fetchBooks = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/books/`,
+          { withCredentials: true }
+        );
+
+        console.log(`response 1:- ${response.data.data}`);
+        console.log(`response 2:- ${response.data}`);
+        setBooks(response.data.data);
+      } catch (error) {
+        console.log("Axios error:", error);
+
+        if (error.response) {
+          setLoadingMessage(`❌ ${error.response.data.message || "Something went wrong"} (Code: ${error.response.status})`);
+        } else if (error.request) {
+          setLoadingMessage("❌ No response from server. Please try again.");
+        } else {
+          setLoadingMessage(`❌ ${error.message}`);
         }
-    }).then((response) => {
-      setBooks(response.data.data);
-      setLoading(false);
-    }).catch((error) => {
-      console.log(error);
-    })
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBooks();
   }, []);
-  return (
-    <div className='p-4'>
-      <div className='flex justify-between items-center'>
-        <h1 className='text-3xl my-8'>Books List</h1>
-        <Link to='/books/create'>
-          <MdOutlineAddBox className='text-sky-700 text-4xl'></MdOutlineAddBox>
-        </Link>
-      </div>
-      {
-        loading ? (
-          <Spinner></Spinner>
-        ) : (
+
+  let content;
+
+  if (loading) {
+    content = <Spinner></Spinner>;
+  } else {
+    if (loadingMessage === "") {
+      content = <div className='p-4'>
+        <div className='flex justify-between items-center'>
+          <h1 className='text-3xl my-8'>Books List</h1>
+          <Link to='/books/create'>
+            <MdOutlineAddBox className='text-sky-700 text-4xl'></MdOutlineAddBox>
+          </Link>
+        </div>
+        {
+
           <table className='w-full border-separate border-spacing-2'>
             <thead>
               <tr>
@@ -77,8 +96,25 @@ const Home = () => {
               ))}
             </tbody>
           </table>
-        )
-      }
+
+        }
+      </div>
+    } else {
+      // oh no, we have some error
+      content = <div className='ml-6 mr-6 mt-6 flex flex-col text-xl text-red-500'>
+        {loadingMessage}
+        <Link to="/login" className="w-fit mt-3">
+          <div className="text-white pl-4 pr-4 pt-2 pb-2 w-fit rounded-2xl bg-green-500">
+            Login
+          </div>
+        </Link>
+      </div>
+    }
+  }
+
+  return (
+    <div >
+      {content}
     </div>
   )
 }

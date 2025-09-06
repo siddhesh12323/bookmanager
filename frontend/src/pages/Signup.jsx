@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 const Signup = () => {
     const [loading, setLoading] = useState(false);
     const [signupMessage, setSignupMessage] = useState("");
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -22,16 +22,18 @@ const Signup = () => {
                 throw new Error("Password and Confirm Passwords are not the same");
             }
             console.log("Passwords same...");
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/signup`, {
-                'username': username,
-                'password': password
-            });
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/signup`,
+                {
+                    'email': email,
+                    'password': password
+                },
+                { withCredentials: true }
+            );
             if (response.status === 201) {
                 setSignupMessage("Account created successfully!");
-                setUsername("");
+                setEmail("");
                 setPassword("");
                 setConfirmPassword("");
-                localStorage.setItem("token", response.data.token);
                 navigate("/books");
             }
         } catch (error) {
@@ -48,7 +50,7 @@ const Signup = () => {
             }
         } finally {
             setLoading(false);
-
+            console.log("Finally block executed.");
         }
     }
 
@@ -57,8 +59,8 @@ const Signup = () => {
             <div className='flex flex-col justify-center items-center h-dvh'>
                 <p className='text-4xl mb-15'>Create an Account</p>
                 <span className='flex flex-col mb-5'>
-                    <label htmlFor="username" className='text-lg mb-1 self-start justify-center'>Username</label>
-                    <input type="text" value={username} id='username' onChange={(e) => setUsername(e.target.value)} className='p-3 w-100 border-2 rounded-2xl h-8' />
+                    <label htmlFor="email" className='text-lg mb-1 self-start justify-center'>Email</label>
+                    <input type="text" value={email} id='email' onChange={(e) => setEmail(e.target.value)} className='p-3 w-100 border-2 rounded-2xl h-8' />
                 </span>
                 <span className='flex flex-col mb-5'>
                     <label htmlFor="password" className='text-lg mb-1 self-start justify-center'>Password</label>

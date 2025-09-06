@@ -4,6 +4,7 @@ import Spinner from '../components/Spinner';
 import { useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton'
 import { BookInfoCard } from '../components/BookInfoCard';
+import { Link } from 'react-router-dom';
 
 const ShowBook = () => {
   const { id } = useParams();
@@ -11,31 +12,68 @@ const ShowBook = () => {
   const [loading, setLoading] = useState(false);
   const [book, setBook] = useState({});
   const token = localStorage.getItem("token");
+  const [successMessage, setSuccessMessage] = useState("");
   useEffect(() => {
-    setLoading(true);
-    axios.get(`${import.meta.env.VITE_API_URL}/books/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    const fetchBook = async () => {
+      setLoading(true);
+      if (!token) {
+        setSuccessMessage("❌ You must be logged in to create a book.");
+        setLoading(false);
+        return;
       }
-    }).then((response) => {
-      console.log(`response 1:- ${response.data.data}`);
-      console.log(`response 2:- ${response.data}`)
-      setBook(response.data.data);
-      setLoading(false);
-    }).catch((error) => {
-      console.log(error);
-    });
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/books/${id}`, {
+          withCredentials: true
+        });
+
+        console.log(`response 1:- ${response.data.data}`);
+        console.log(`response 2:- ${response.data}`);
+        setBook(response.data.data);
+      } catch (error) {
+        console.log("Axios error:", error);
+
+        if (error.response) {
+          setSuccessMessage(`❌ ${error.response.data.message || "Something went wrong"} (Code: ${error.response.status})`);
+        } else if (error.request) {
+          setSuccessMessage("❌ No response from server. Please try again.");
+        } else {
+          setSuccessMessage(`❌ ${error.message}`);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBook();
   }, [id, token]);
-  return (
-    <div>
+
+  let content;
+
+  if (loading) {
+    <>
       <BackButton></BackButton>
-      {
-        loading ? (
-          <Spinner></Spinner>
-        ) : (
-          BookInfoCard(book)
-        )
-      }
+      <Spinner></Spinner>
+    </>
+  } else {
+    if (successMessage === "") {
+      content = <>
+        <BackButton></BackButton>
+        {BookInfoCard(book)}
+      </>
+    } else {
+      content = <div className='ml-6 mr-6 mt-6 flex flex-col text-xl text-red-500'>
+        {successMessage}
+        <Link to="/login" className="w-fit mt-3">
+          <div className="text-white pl-4 pr-4 pt-2 pb-2 w-fit rounded-2xl bg-green-500">
+            Login
+          </div>
+        </Link>
+      </div>
+    }
+  }
+
+  return (
+    <div >
+      {content}
     </div>
   )
 }

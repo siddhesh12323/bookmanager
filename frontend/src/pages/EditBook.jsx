@@ -18,8 +18,6 @@ const EditBook = () => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  const token = localStorage.getItem("token");
-
   const onDrop = (acceptedFiles) => {
     const uploadedFile = acceptedFiles[0];
     setFile(uploadedFile);
@@ -34,16 +32,8 @@ const EditBook = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (!token) {
-      setLoading(false);
-      setLoadingMessage("Please login to edit books!");
-      return;
-    }
-    axios.get(`${import.meta.env.VITE_API_URL}/books/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((response) => {
+
+    axios.get(`${import.meta.env.VITE_API_URL}/books/${id}`, { withCredentials: true }).then((response) => {
       console.log(`response:- ${response.data.data}`);
       console.log(`response title:- ${response.data.data.title}`);
       setAuthor(response.data.data.author);
@@ -56,17 +46,12 @@ const EditBook = () => {
       setLoadingMessage(`Error in loading book!`);
       console.log(error);
     });
-  }, [id, token])
+  }, [id])
 
   async function editbook() {
     setSubmitting(true);
     setSuccessMessage("");
     try {
-      if (!token) {
-        setSuccessMessage("❌ You must be logged in to create a book.");
-        setSubmitting(false);
-        return;
-      }
       const formData = new FormData();
       formData.append("title", title);
       formData.append("author", author);
@@ -74,9 +59,8 @@ const EditBook = () => {
       if (file) formData.append("image", file);
       const response = await axios.put(`${import.meta.env.VITE_API_URL}/books/${id}`, formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data"
-        }
+        }, withCredentials: true
       });
       console.log(`Response code:- ${response.status}`);
       if (response.status === 200) {

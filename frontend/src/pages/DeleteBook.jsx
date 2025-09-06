@@ -3,6 +3,7 @@ import Spinner from '../components/Spinner'
 import BackButton from '../components/BackButton';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { BookInfoCard } from '../components/BookInfoCard';
 
 const DeleteBook = () => {
@@ -13,14 +14,11 @@ const DeleteBook = () => {
   const [loadingMessage, setLoadingMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [deletedMessage, setDeletedMessage] = useState("");
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     setLoading(true);
     axios.get(`${import.meta.env.VITE_API_URL}/books/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      withCredentials: true
     }).then((response) => {
       console.log(`response:- ${response.data}`);
       console.log(`response code:- ${response.status}`);
@@ -47,15 +45,13 @@ const DeleteBook = () => {
     }).finally(() => {
       setLoading(false);
     });
-  }, [id, token]);
+  }, [id]);
 
   const deleteBook = async () => {
     setDeleting(true);
     try {
       const response = await axios.delete(`${import.meta.env.VITE_API_URL}/books/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        withCredentials: true
       });
       if (response.status === 200) {
         setDeletedMessage(`Book Deleted!`);
@@ -72,19 +68,36 @@ const DeleteBook = () => {
   let content;
 
   if (loading) {
-    content = <Spinner />;
+    content = <>
+      <BackButton />
+      <Spinner />
+    </>;
   } else if (
     loadingMessage === "Error in loading data!" ||
     loadingMessage === "No Book Found with the given ID :("
   ) {
-    content = <p>{loadingMessage}</p>;
+    content = <>
+      <BackButton />
+      <p>{loadingMessage}</p>
+    </>
+  } else if (loadingMessage === "Please login to delete books!") {
+    // oh no, we have some error
+    content = <div className='ml-6 mr-6 mt-6 flex flex-col text-xl text-red-500'>
+      {loadingMessage}
+      <Link to="/login" className="w-fit mt-3">
+        <div className="text-white pl-4 pr-4 pt-2 pb-2 w-fit rounded-2xl bg-green-500">
+          Login
+        </div>
+      </Link>
+    </div>
   } else {
     content = (
       <>
+        <BackButton />
         {BookInfoCard(book)}
         <div>
           <button
-            className="ml-6 mt-4 bg-red-500 w-30 h-10 rounded-2xl mr-1.5"
+            className="ml-6 mt-4 bg-red-500 w-30 h-10 rounded-2xl mr-1.5 cursor-pointer"
             onClick={() => setShowPopup(true)}
           >
             Delete
@@ -103,13 +116,13 @@ const DeleteBook = () => {
               </p>
               <div className="flex justify-end mt-5">
                 <button
-                  className="bg-red-500 w-20 rounded-2xl mr-1.5"
+                  className="bg-green-500 w-20 text-white rounded-2xl mr-1.5 cursor-pointer"
                   onClick={() => setShowPopup(false)}
                 >
                   Cancel
                 </button>
                 <button
-                  className="bg-green-500 w-20 rounded-2xl"
+                  className="bg-red-500 text-white w-20 rounded-2xl cursor-pointer"
                   onClick={deleteBook}
                 >
                   {deleting ? "Deleting..." : "Yes"}
@@ -124,7 +137,6 @@ const DeleteBook = () => {
 
   return (
     <div>
-      <BackButton />
       {content}
     </div>
   );
@@ -138,7 +150,7 @@ const styles = {
     left: 0,
     width: "100vw",
     height: "100vh",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

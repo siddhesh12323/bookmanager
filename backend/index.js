@@ -5,11 +5,30 @@ import userRouter from "./routes/authRoutes.js";
 import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
+import morgan from "morgan";
 dotenv.config();
+import cookieParser from "cookie-parser";
 
 const app = express();
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://bookmanager-app.onrender.com/"
+];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
+app.use(morgan("dev"));
 app.use("/books", router);
 app.use("/users", userRouter);
 app.use("/uploads", express.static("uploads"));

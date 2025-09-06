@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios';
 
 
 const Onboarding = () => {
@@ -7,19 +8,13 @@ const Onboarding = () => {
     const [showToast, setShowToast] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token != null) {
-            navigate("/books");
-        }
+        axios.get(`${import.meta.env.VITE_API_URL}/users/me`, { withCredentials: true })
+            .then(() => navigate("/books"))
+            .catch(() => { });
     }, [navigate]);
 
     const handleManageBooksClick = (e) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            e.preventDefault();
-            setShowToast(true);
-            setTimeout(() => setShowToast(false), 3000);
-        }
+
     };
 
     return (
