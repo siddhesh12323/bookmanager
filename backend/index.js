@@ -24,7 +24,7 @@ const allowedOrigins = [
 //   })
 // );
 
-app.use(cors());
+app.use(cors({}));
 
 // ✅ This makes Express reply to preflight OPTIONS
 // app.options("*", cors());

@@ -8,10 +8,13 @@ const Onboarding = () => {
     const [showToast, setShowToast] = useState(false);
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_API_URL}/users/me`, { withCredentials: true })
-            .then(() => navigate("/books"))
-            .catch(() => { });
-    }, [navigate]);
+        // axios.get(`${import.meta.env.VITE_API_URL}/users/me`, { withCredentials: true })
+        //     .then(() => navigate("/books"))
+        //     .catch(() => { });
+    },
+        [
+            // navigate
+        ]);
 
     const handleManageBooksClick = (e) => {
 
