@@ -12,7 +12,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://bookmanager-app.onrender.com/"
+  "https://bookmanager-app.onrender.com"
 ];
 app.use(
   cors({
@@ -28,9 +28,6 @@ app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
-app.use("/books", router);
-app.use("/users", userRouter);
-app.use("/uploads", express.static("uploads"));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -40,6 +37,10 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
+
+app.use("/books", router);
+app.use("/users", userRouter);
+app.use("/uploads", express.static("uploads"));
 
 // app.use(
 //   cors({
