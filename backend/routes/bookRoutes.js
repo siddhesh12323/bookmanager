@@ -77,9 +77,9 @@ router.put("/:id", authMiddleware, upload.single("image"), async (request, respo
       { new: true }
     );
     if (!book) {
-      return response.send(404).send({ message: "Book Not found!" });
+      return response.status(404).send({ message: "Book Not found!" });
     }
-    return response.send(200).send({ message: "Book Updated", data: book });
+    return response.status(200).send({ message: "Book Updated", data: book });
   } catch (error) {
     console.log(error);
     return response.status(500).send({ message: error });
@@ -97,9 +97,9 @@ router.delete("/:id", authMiddleware, async (request, response) => {
       user: request.user.id,
     });
     if (!result) {
-      return response.send(404).send({ message: "Book Not found!" });
+      return response.status(404).send({ message: "Book Not found!" });
     }
-    return response.send(200).send({ message: "Book Deleted" });
+    return response.status(200).send({ message: "Book Deleted" });
   } catch (error) {
     console.log(error);
     return response.status(500).send({ message: error.message });
