@@ -42,7 +42,7 @@ userRouter.post("/login", async (request, response) => {
 
     response.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // only HTTPS in prod
+      secure: true, // only HTTPS in prod
       sameSite: "none", // CSRF protection
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
@@ -100,7 +100,7 @@ userRouter.post("/signup", async (request, response) => {
     );
     response.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // only HTTPS in prod
+      secure: true, // only HTTPS in prod
       sameSite: "none", // CSRF protection
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
@@ -121,7 +121,7 @@ userRouter.post("/signup", async (request, response) => {
 userRouter.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
     sameSite: "none",
   });
   return res.status(200).send({ message: "Logged out" });
