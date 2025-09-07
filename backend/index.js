@@ -14,17 +14,19 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://bookmanager-app.onrender.com"
 ];
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true, // allow cookies
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+// app.use(
+//   cors({
+//     origin: allowedOrigins,
+//     credentials: true, // allow cookies
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
+
+app.use(cors());
 
 // ✅ This makes Express reply to preflight OPTIONS
-app.options("*", cors());
+// app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
