@@ -10,6 +10,7 @@ dotenv.config();
 import cookieParser from "cookie-parser";
 
 const app = express();
+app.set("trust proxy", 1);
 const allowedOrigins = [
   "http://localhost:5173",
   "https://bookmanager-app.onrender.com"
