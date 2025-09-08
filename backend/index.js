@@ -31,7 +31,7 @@ const allowedOrigins = [
 // );
 
 app.use(cors({
-  origin: 'https://bookmanager-app.onrender.com',
+  origin: process.env.FRONTEND_URL,
   credentials: true
 }));
 

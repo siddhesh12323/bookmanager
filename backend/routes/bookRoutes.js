@@ -31,7 +31,7 @@ router.post("/", authMiddleware, upload.single("image"), async (request, respons
   }
 });
 
-router.get("/", authMiddleware, async (request, response) => {
+router.get("/", async (request, response) => {
   try {
     const books = await Book.find({ user: request.user.id });
     return response.status(200).send({
