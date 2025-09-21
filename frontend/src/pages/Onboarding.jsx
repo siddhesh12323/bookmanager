@@ -8,17 +8,24 @@ const Onboarding = () => {
     const [showToast, setShowToast] = useState(false);
 
     useEffect(() => {
-        // axios.get(`${import.meta.env.VITE_API_URL}/users/me`, { withCredentials: true })
-        //     .then(() => navigate("/books"))
-        //     .catch(() => { });
-    },
-        [
-            // navigate
-        ]);
+        async function checkAuth() {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/users/me`,
+                    { withCredentials: true }
+                );
 
-    const handleManageBooksClick = (e) => {
+                if (response.status === 200) {
+                    navigate("/books");
+                }
+            } catch (error) {
+                console.error("Error checking auth:", error);
+            }
+        }
 
-    };
+        checkAuth();
+    }, [navigate]);
+
 
     return (
         <div className="flex flex-col justify-center items-center h-dvh">
@@ -41,13 +48,6 @@ const Onboarding = () => {
                     </Link>
                 </span>
             </div>
-            <Link
-                to="/books"
-                className="w-40 h-10 bg-green-500 flex justify-center items-center rounded-2xl"
-                onClick={handleManageBooksClick}
-            >
-                <p>Manage Books</p>
-            </Link>
             {showToast && (
                 <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50">
                     Please login or signup to continue.
